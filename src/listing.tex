@@ -1,0 +1,159 @@
+\footnotesize
+\begin{lstlisting}[style=CodeListing]
+
+    #include <iostream>
+    #include <chrono>
+    #include <cmath>
+    #include <vector>
+    #include <Windows.h>
+    #include <thread>
+    
+    #include "include/omp.h"
+    #define MOD 1000000007 
+    
+    long long sum(long long x, long long y)
+    {
+        return (x + y) % MOD;
+    }
+    long long mult(long long a, long long b)
+    {
+        return ((a % MOD) * (b % MOD)) % MOD;
+    }
+    long long binpow(long long x, long long n)
+    {
+        long long res = 1;
+        while (n)
+        {
+            if (n & 1)
+                res = (res * x) % MOD;
+            x = (x * x) % MOD;
+            n >>= 1;
+        }
+        return res;
+    }
+    long long divide(long long a, long long b)
+    {
+        //return mult(a, binpow(b, phi(MOD) - 1)) % MOD;
+        return mult(a, binpow(b, MOD - 2)) % MOD;
+    }
+    
+    void calculate_sum(long long tmax)
+    {
+        long long taylor = 0;
+        long long x = 17, nx = 1, fa = 1;
+        #pragma omp parallel for
+        for(int i = 0; i < tmax; i++)
+        {
+            if(i > 0) fa = mult(fa, i);
+            nx = mult(nx, x);
+            taylor = sum(taylor, divide(nx, fa));
+        }
+    }
+    
+    std::vector<long long> v;
+    std::vector<long long> table;
+    
+    const unsigned long long MAX = 1000000;
+    const long double stepSize = 0.02d;
+    const long long tableStepSize = 10;
+    
+    int main()
+    {
+        // freopen("input.txt", "r", stdin);
+        // freopen("output_NO_OMP.txt", "w", stdout);
+        // freopen("outputOMP.txt", "w", stdout);
+    
+        MEMORYSTATUSEX status;
+        status.dwLength = sizeof(status);
+        GlobalMemoryStatusEx(&status);
+        unsigned long long totalMemory = status.ullTotalPhys;
+        double totalMemoryGB = static_cast<double>(totalMemory) / (1024 * 1024 * 1024);
+        std::cout << "Total physical memory: " << totalMemoryGB << " GB" << std::endl;
+    
+        int numThreads = omp_get_max_threads();
+        std::cout << "All threads : " << numThreads << std::endl;
+        
+        omp_set_num_threads(1);
+        std::cout << "1 thread : " << std::endl;
+        auto begin = std::chrono::high_resolution_clock::now();
+        for(long long tmax = MAX * stepSize; tmax <= MAX; tmax += MAX * stepSize)
+        {
+            calculate_sum(tmax);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
+            v.push_back(duration.count());
+        }
+        #pragma omp master
+        {
+            for(int i = 0; i < v.size(); i += 1)
+                std::cout << v[i] << ", ";
+        }
+        std::cout << std::endl;
+        for(size_t i = 0; i < v.size(); i += tableStepSize)
+            table.push_back(v[i + 9]);
+        v.clear();
+        
+        // Измерение времени выполнения на всех физических потоках
+        omp_set_num_threads(numThreads / 2);
+        std::cout << numThreads / 2 << " threads (all physical threads): " << std::endl;
+        begin = std::chrono::high_resolution_clock::now();
+        for(long long tmax = MAX * stepSize; tmax <= MAX; tmax += MAX * stepSize)
+        {
+            calculate_sum(tmax);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
+            v.push_back(duration.count());
+        }
+        #pragma omp master
+        {
+            for(int i = 0; i < v.size(); i += 1)
+                std::cout << v[i] << ", ";
+        }
+        std::cout << std::endl;
+        for(size_t i = 0; i < v.size(); i += tableStepSize)
+            table.push_back(v[i + 9]);
+        v.clear();
+    
+        // Измерение времени выполнения на всех логических потоках
+        omp_set_num_threads(numThreads);
+        std::cout << numThreads << " threads (all logical threads): " << std::endl;
+        begin = std::chrono::high_resolution_clock::now();
+        for(long long tmax = MAX * stepSize; tmax <= MAX; tmax += MAX * stepSize)
+        {
+            calculate_sum(tmax);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
+            v.push_back(duration.count());
+        }
+        #pragma omp master
+        {
+            for(int i = 0; i < v.size(); i += 1)
+                std::cout << v[i] << ", ";
+        }
+        std::cout << std::endl;
+        for(size_t i = 0; i < v.size(); i += tableStepSize)
+            table.push_back(v[i + 9]);
+        v.clear();
+    
+        std::cout << "Execution time comparison:" << std::endl;
+        std::cout << "-------------------------------------------------------------------------" << std::endl;
+        std::cout << "| Threads\t| Time (in milliseconds)\t\t\t\t|" << std::endl;
+        std::cout << "-------------------------------------------------------------------------" << std::endl;
+        std::cout << "| 1\t\t| ";
+        for(size_t i = 0; i < 5; i++)
+            std::cout << table[i] << " ";
+        std::cout << "\t\t|" << std::endl;
+        std::cout << "| Half\t\t| ";
+        for(size_t i = 5; i < 10; i++)
+            std::cout << table[i] << " ";
+        std::cout << "\t\t\t|" << std::endl;
+        std::cout << "| All \t\t| ";
+        for(size_t i = 10; i < 15; i++)
+            std::cout << table[i] << " ";
+        std::cout << "\t\t\t|" << std::endl;
+        std::cout << "-------------------------------------------------------------------------" << std::endl;
+        return 0;
+    }
+
+\end{lstlisting}
+\normalsize
