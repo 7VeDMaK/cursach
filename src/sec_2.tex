@@ -43,16 +43,12 @@
 
 Современным стандартом в задачах SISR, демонстрирующим оптимальный баланс между качеством восстановления и вычислительной стабильностью, является архитектура EDSR (Enhanced Deep Residual Networks), предложенная B. Lim и др. \cite{lim2017edsr}. Именно модель EDSR с коэффициентом масштабирования $\times 2$ интегрирована в разработанный гибридный программный комплекс для восстановления изображений после вейвлет-сжатия.
 
-% ==========================================
-% [МЕСТО ДЛЯ РИСУНКА 1.3]
-% Сюда вставляется архитектура EDSR (схема со свертками и остаточными блоками). В файлах проекта я видел картинку архитектуры нейросети, можно использовать её.
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.9\textwidth]{images/edsr_architecture.png}
-%     \caption{Архитектура глубокой нейронной сети EDSR (Enhanced Deep Residual Networks)}
-%     \label{fig:edsr_arch}
-% \end{figure}
-% ==========================================
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{media/images/edsr_architecture.png}
+    \caption{Архитектура глубокой нейронной сети EDSR (Enhanced Deep Residual Networks)}
+    \label{fig:edsr_arch}
+\end{figure}
 
 Ключевым архитектурным нововведением EDSR стал радикальный пересмотр структуры остаточных блоков (Residual Blocks). Математически стандартный остаточный блок можно описать уравнением:
 \begin{equation}
