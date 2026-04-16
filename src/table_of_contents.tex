@@ -5,10 +5,20 @@
 \setlength{\cftsecindent}{2em} % Устанавливаем отступ для секций (можно изменить значение)
 
 % Зачем: Не захламлять основной файл
-% Примечание: \small\selectfont злостный хак, чтобы уменьшить размер шрифта в ToC
 {
-\normalsize\selectfont
+\small\selectfont
 \tableofcontents
 \thispagestyle{empty}
+
+% Первая пустая страница
+\newpage
+\mbox{}
+\thispagestyle{empty}
+
+% Вторая пустая страница
+\newpage
+\mbox{}
+\thispagestyle{empty}
+
 \newpage
 }
