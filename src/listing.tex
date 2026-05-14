@@ -6,9 +6,13 @@
 # =====================================================================
 # app.py
 # =====================================================================
+# =====================================================================
+# app.py
+# =====================================================================
 import os
 import cv2
 import time
+import shutil
 import numpy as np
 from flask import Flask, render_template, request
 from core.wavelet_engine import WaveletCompressor
@@ -83,23 +87,25 @@ def index():
             size_orig_val, size_orig_str = get_file_info(original_path)
             filename = os.path.basename(original_path)
             name_only = filename.rsplit('.', 1)[0]
+            extension = os.path.splitext(original_path)[1]
 
             t0 = time.time()
 
             if app_mode == 'auto' and size_orig_val < 50:
                 compressed_path = os.path.join(RESULTS_FOLDER,
-                                               f"comp_{name_only}.png")
-                cv2_imwrite_utf8(compressed_path, original_img)
+                                               f"comp_{name_only}{extension}")
+                shutil.copy(original_path, compressed_path)
                 t1 = time.time()
 
                 restored_path = os.path.join(RESULTS_FOLDER,
-                                             f"rest_{name_only}.png")
-                cv2_imwrite_utf8(restored_path, original_img)
+                                             f"rest_{name_only}{extension}")
+                shutil.copy(original_path, restored_path)
                 t2 = time.time()
 
                 model_name = "Pass"
                 comp_level_str = "Off"
                 highlight_text = "Small file"
+                current_comp_level = 0
             else:
                 if app_mode == 'auto':
                     megapixels = (h_orig * w_orig) / 1_000_000
@@ -120,18 +126,16 @@ def index():
 
                 if current_comp_level == 0:
                     compressed_path = os.path.join(RESULTS_FOLDER,
-                                                   f"comp_{name_only}.jpg")
-                    cv2_imwrite_utf8(compressed_path, original_img,
-                                     [cv2.IMWRITE_JPEG_QUALITY, 85])
+                                                   f"comp_{name_only}{extension}")
+                    shutil.copy(original_path, compressed_path)
                     t1 = time.time()
 
-                    final_img = cv2_imread_utf8(compressed_path)
-                    model_name = "Baseline JPEG"
                     restored_path = os.path.join(RESULTS_FOLDER,
-                                                 f"rest_{name_only}.jpg")
-                    cv2_imwrite_utf8(restored_path, final_img,
-                                     [cv2.IMWRITE_JPEG_QUALITY, 95])
+                                                 f"rest_{name_only}{extension}")
+                    shutil.copy(original_path, restored_path)
                     t2 = time.time()
+
+                    model_name = "Original (Pass-Through)"
                     comp_level_str = f"OFF{auto_reason}"
                 else:
                     color_palette = meta_engine.extract_color_palette(
@@ -141,6 +145,7 @@ def index():
                     skeleton = compressor.cascade_compress(
                         original_img, level=current_comp_level)
 
+                    # Скелет сохраняем с качеством 85
                     compressed_path = os.path.join(RESULTS_FOLDER,
                                                    f"comp_{name_only}.jpg")
                     cv2_imwrite_utf8(compressed_path, skeleton,
@@ -156,6 +161,7 @@ def index():
                     final_img = meta_engine.apply_edge_sharpening(
                         color_corrected, edge_map)
 
+                    # Финал сохраняем с качеством 95
                     restored_path = os.path.join(RESULTS_FOLDER,
                                                  f"rest_{name_only}.jpg")
                     cv2_imwrite_utf8(restored_path, final_img,
@@ -169,22 +175,24 @@ def index():
 
             size_comp_val, size_comp_str = get_file_info(compressed_path)
             size_rest_val, size_rest_str = get_file_info(restored_path)
-            comp_img = cv2_imread_utf8(compressed_path)
-            if comp_img is not None:
-                h_comp, w_comp = comp_img.shape[:2]
-            else:
-                h_comp, w_comp = (0, 0)
 
-            if app_mode == 'auto' and size_orig_val < 50:
+            if current_comp_level == 0 or (app_mode == 'auto' and size_orig_val < 50):
+                h_comp, w_comp = h_orig, w_orig
                 psnr_val = 100.0
                 ssim_val = 1.000
                 compression_ratio = 0.0
+                if not 'highlight_text' in locals():
+                    highlight_text = "Pass-through"
             else:
+                comp_img = cv2_imread_utf8(compressed_path)
+                h_comp, w_comp = comp_img.shape[:2] if comp_img is not None else (0, 0)
+
                 restored_img = cv2_imread_utf8(restored_path)
                 psnr_val = round(calculate_psnr(
                     original_img, restored_img), 2)
                 ssim_val = round(calculate_ssim(
                     original_img, restored_img), 3)
+
                 if size_orig_val > 0:
                     compression_ratio = (1 - (size_comp_val / size_orig_val)) * 100
                 else:
@@ -337,6 +345,19 @@ class AIEnhancer:
             result_img = cv2.resize(result_img, (w_target, h_target),
                                     interpolation=cv2.INTER_CUBIC)
 
+        comp_lab = cv2.cvtColor(
+            compressed_img, cv2.COLOR_BGR2LAB).astype(np.float32)
+        res_lab = cv2.cvtColor(
+            result_img, cv2.COLOR_BGR2LAB).astype(np.float32)
+
+        for i in range(3):
+            shift = comp_lab[:, :, i].mean() - res_lab[:, :, i].mean()
+            res_lab[:, :, i] += shift
+
+        result_img = np.clip(res_lab, 0, 255).astype(np.uint8)
+        result_img = cv2.cvtColor(result_img, cv2.COLOR_LAB2BGR)
+        # --------------------------------------------------
+
         return result_img, selected_model.upper(), reason
 
 
@@ -389,10 +410,25 @@ class MetadataEngine:
     def apply_color_correction(target_img, palette):
         if palette is None:
             return target_img
+
         h, w = target_img.shape[:2]
         color_map = cv2.resize(palette, (w, h),
-                               interpolation=cv2.INTER_LANCZOS4)
-        return cv2.addWeighted(target_img, 0.85, color_map, 0.15, 0)
+                               interpolation=cv2.INTER_CUBIC)
+
+        t_lab = cv2.cvtColor(target_img, cv2.COLOR_BGR2LAB)
+        t_lab = t_lab.astype(np.float32)
+
+        c_lab = cv2.cvtColor(color_map, cv2.COLOR_BGR2LAB)
+        c_lab = c_lab.astype(np.float32)
+
+        for i in range(3):
+            t_m, t_s = t_lab[:, :, i].mean(), t_lab[:, :, i].std()
+            c_m, c_s = c_lab[:, :, i].mean(), c_lab[:, :, i].std()
+
+            t_lab[:, :, i] = ((t_lab[:, :, i] - t_m) * (c_s / (t_s + 1e-6))) + c_m
+
+        t_lab = np.clip(t_lab, 0, 255).astype(np.uint8)
+        return cv2.cvtColor(t_lab, cv2.COLOR_LAB2BGR)
 
     @staticmethod
     def apply_edge_sharpening(target_img, edge_map_small):
