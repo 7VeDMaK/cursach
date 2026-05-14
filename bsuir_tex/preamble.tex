@@ -863,44 +863,32 @@
 \usepackage[russian]{nomencl}
 \makenomenclature
 
-% Установка заголовка
-\renewcommand{\nomname}{УСЛОВНЫЕ СОКРАЩЕНИЯ}
+% Установка заголовка (Пункт 14)
+\renewcommand{\nomname}{ПЕРЕЧЕНЬ СОКРАЩЕНИЙ}
 
-% установка расстояния между элементами в номенклатуре = 0 (из документации)
+% Установка расстояния между элементами в номенклатуре = 0
 \setlength{\nomitemsep}{-\parsep}
 
-% Зачем: установка левого отступа в номенклатуре
-\patchcmd{\thenomenclature}
-  {\leftmargin\labelwidth}
-  {\leftmargin\labelwidth\itemindent\fivecharsapprox }
-  {}{}
+% Зачем: Выравнивание аббревиатур в красивый ровный столбик
+% Это задает фиксированную ширину левой колонки (под сами аббревиатуры)
+\setlength{\nomlabelwidth}{3cm}
 
-% Зачем: зануление отступа после сокращения
-\patchcmd{\thenomenclature}
-  {\advance\leftmargin\labelsep}
-  {\labelsep=0cm \advance\leftmargin\labelsep}
-  {}{}
-
-%% #1 - short name
-%% #2 - long name
-%% #3 - long name on russian
+%% Макрос для латинских аббревиатур (Пункт 15)
+%% Формат: АББРЕВИАТУРА -- (Расшифровка) перевод на русский без точки
 \newcommand{\nomenclaturex}[3]{
-  \nomenclature{#1 }{(#2) -- #3}
+  \nomenclature{#1 }{~-- (#2) #3}
 }
 
-%% #1 - short name on russian
-%% #2 - long name on russian
+%% Макрос для кириллицы (Пункт 15)
+%% Prefix 0 автоматически ставит их в начало списка
 \newcommand{\nomenclatureRus}[2]{
-  % Prefix 0 will move nomenclature in the beginning of an order
-  \nomenclature[0]{#1 }{ -- #2}
+  \nomenclature[0]{#1 }{~-- #2}
 }
 
-% Зачем: обновление форматирования заголовка для номенклатуры
+% Зачем: обновление форматирования заголовка для номенклатуры (по центру, без отступа, жирный)
 \makeatletter
 \patchcmd{\thenomenclature}
   {\tocbasic@listhead{\list@fname}}
-  % Force removing page number
-  % https://tex.stackexchange.com/a/20695/139966
   {\sectioncentered*{\list@fname}\thispagestyle{empty}}
   {}{}
 \makeatother
