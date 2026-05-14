@@ -2,20 +2,31 @@
 
 \begin{document}
 
+% Титульный лист
 \pagestyle{empty}
-
 \input{title}
 
-\input{table_of_contents}
+% Включаем нумерацию и выводим Реферат
+\pagestyle{plain}
+\include{abstract}
 
+% --- Две пустые страницы вместо задания ---
+\newpage\null\thispagestyle{empty} % Первая пустая страница
+\newpage\null\thispagestyle{empty} % Вторая пустая страница
+\newpage
+
+% Устанавливаем счетчик на 5 (Титул(1) + Реферат(2) + 2 пустых(3,4) = Содержание на 5-й)
 \setcounter{page}{5}
 
-\pagestyle{plain}
+\input{table_of_contents}
 
 \input{content}
 
 \input{references}
 
 \input{annexes}
+
+% ЗАГЛУШКА: Ведомость документов
+% \includepdf[pages=-]{media/pdf/Ведомость документов.pdf}
 
 \end{document}
