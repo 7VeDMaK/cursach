@@ -120,44 +120,70 @@
 
 % Зачем: Определяет отступы слева для записей в таблице содержания.
 % Почему: Пункт 2.2.7 Требований по оформлению пояснительной записки.
-\makeatletter
-\renewcommand{\cftsecfillnum}[1]
-{%
-    \ifnum#1<10%
-    \gdef\@pnumwidth{6pt}%
-    \else%
-    \ifnum#1<100%
-    \gdef\@pnumwidth{14pt}%
-    \else%
-    \gdef\@pnumwidth{18pt}%
-    \fi\fi%
-    {\cftsecleader}\nobreak%
-    \makebox[\@pnumwidth][\cftpnumalign]{\cftsecpagefont #1}\cftsecafterpnum\par%
-}
+% \makeatletter
+% \renewcommand{\cftsecfillnum}[1]
+% {%
+%     \ifnum#1<10%
+%     \gdef\@pnumwidth{6pt}%
+%     \else%
+%     \ifnum#1<100%
+%     \gdef\@pnumwidth{14pt}%
+%     \else%
+%     \gdef\@pnumwidth{18pt}%
+%     \fi\fi%
+%     {\cftsecleader}\nobreak%
+%     \makebox[\@pnumwidth][\cftpnumalign]{\cftsecpagefont #1}\cftsecafterpnum\par%
+% }
+%
+% \renewcommand{\cftsubsecfillnum}[1]
+% {%
+%     \ifnum#1<10%
+%     \gdef\@pnumwidth{6pt}%
+%     \else%
+%     \ifnum#1<100%
+%     \gdef\@pnumwidth{14pt}%
+%     \else%
+%     \gdef\@pnumwidth{18pt}%
+%     \fi\fi%
+%     {\cftsecleader}\nobreak%
+%     \makebox[\@pnumwidth][\cftpnumalign]{\cftsubsecpagefont #1}\cftsubsecafterpnum\par%
+% }
+% \makeatother
 
-\renewcommand{\cftsubsecfillnum}[1]
-{%
-    \ifnum#1<10%
-    \gdef\@pnumwidth{6pt}%
-    \else%
-    \ifnum#1<100%
-    \gdef\@pnumwidth{14pt}%
-    \else%
-    \gdef\@pnumwidth{18pt}%
-    \fi\fi%
-    {\cftsecleader}\nobreak%
-    \makebox[\@pnumwidth][\cftpnumalign]{\cftsubsecpagefont #1}\cftsubsecafterpnum\par%
-}
-\makeatother
+% --- НАСТРОЙКА СОДЕРЖАНИЯ (Пакет tocloft) ---
 
-\renewcommand{\cftsecleader}{\cftdotfill{\cftsecdotsep}}
-\renewcommand{\cftsubsecleader}{\cftdotfill{\cftsubsecdotsep}}
+% 1. Плотность точек (густые)
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdot}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdot}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdot}}
 
-\renewcommand\cftsecdotsep{\cftdot}
-\renewcommand\cftsubsecdotsep{\cftdot}
+% 2. Убираем жирность и включаем стандартные переносы для содержания
+\renewcommand{\cftsecfont}{\normalfont\hyphenpenalty=50}
+\renewcommand{\cftsecpagefont}{\normalfont}
+\renewcommand{\cftsubsecfont}{\normalfont\hyphenpenalty=50}
+\renewcommand{\cftsubsubsecfont}{\normalfont\hyphenpenalty=50}
 
-\cftsetindents{section}{0.5em}{1.5em}
-\cftsetindents{subsection}{2.0em}{2.5em}
+% 3. ВЫРАВНИВАНИЕ ПРАВОГО КРАЯ И ПРАВИЛО "5 ТОЧЕК"
+\cftsetpnumwidth{1em}
+
+% 4. "Лесенка" с отступом ровно в один пробел слева
+\newlength{\secnumw}
+\settowidth{\secnumw}{1~}
+\newlength{\subsecnumw}
+\settowidth{\subsecnumw}{1.1~}
+
+\cftsetindents{section}{0em}{\secnumw}
+\cftsetindents{subsection}{\secnumw}{\subsecnumw}
+
+% Расчет для третьего уровня (1.1.1)
+\newlength{\subsubindent}
+\setlength{\subsubindent}{\secnumw}
+\addtolength{\subsubindent}{\subsecnumw}
+\newlength{\subsubsecnumw}
+\settowidth{\subsubsecnumw}{1.1.1~}
+\cftsetindents{subsubsection}{\subsubindent}{\subsubsecnumw}
+
+\setlength{\cftbeforesecskip}{0pt}
 
 
 % Зачем: Работа с колонтитулами
