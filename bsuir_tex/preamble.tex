@@ -548,10 +548,10 @@
         \setlength\savedbelowdisplayskip{\belowdisplayskip}
         \setlength\savedabovedisplayshortskip{\abovedisplayshortskip}
         \setlength\savedbelowdisplayshortskip{\belowdisplayshortskip}
-        \setlength\abovedisplayskip{1em}
-        \setlength\belowdisplayskip{1em}
-        \setlength\abovedisplayshortskip{1em}
-        \setlength\belowdisplayshortskip{1em}
+        \setlength\abovedisplayskip{18pt}
+        \setlength\belowdisplayskip{18pt}
+        \setlength\abovedisplayshortskip{18pt}
+        \setlength\belowdisplayshortskip{18pt}
         \begin{oldequation}
     }
     {
@@ -906,9 +906,8 @@
 % Зачем: убирает нумерацию страниц на листах с содержанием
 % \AtBeginDocument{\addtocontents{toc}{\protect\thispagestyle{empty}}}
 
-% Зачем: устанавливает отступ после рисунков
-%% Подробнее тут: https://tex.stackexchange.com/a/60479/139966
-\setlength{\textfloatsep}{14pt}
+% Зачем: устанавливает отступ после рисунков и таблиц в 1 пробельную строку (18pt)
+\setlength{\textfloatsep}{18pt plus 2pt minus 2pt}
 
 % Зачем: решить проблему с переносом URL в библиографии
 %% Подробнее о базовых настройках: https://tex.stackexchange.com/a/102697/139966
