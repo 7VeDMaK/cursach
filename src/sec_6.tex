@@ -14,10 +14,9 @@
 
 \begin{table}[ht]
 \caption{Расчет основной зарплаты исполнителей проектных работ}
-\centering
-\begin{tabular}{|p{0.30\textwidth}|p{0.15\textwidth}|p{0.20\textwidth}|p{0.15\textwidth}|p{0.10\textwidth}|}
+\begin{tabularx}{\textwidth}{|X|C{0.15\textwidth}|C{0.20\textwidth}|C{0.15\textwidth}|C{0.12\textwidth}|}
 \hline
-Исполнители & Количество, чел. & Трудоемкость, мес. & Зарплата в месяц, руб. & Сумма, руб. \\
+\centering\arraybackslash Исполнитель & Количество, чел. & Трудоемкость, мес. & Зарплата в месяц, руб. & Сумма, руб. \\
 \hline
 Инженер-программист & 2 & 0,5 & 2000 & 2000 \\
 \hline
@@ -27,9 +26,9 @@
 \hline
 \multicolumn{4}{|l|}{Всего основная заработная плата ($\text{З}_{\text{о}}$)} & 5250 \\
 \hline
-\multicolumn{5}{|p{0.96\textwidth}|}{Примечание~-- статистика уровня заработных плат ИТ-специалистов взята на основе открытых данных портала rabota.by по состоянию на \targetYear~год.} \\
+\multicolumn{5}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{Примечание~--- статистика уровня заработных плат ИТ-специалистов взята на основе открытых данных портала rabota.by по состоянию на \targetYear~год.} \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Итоговая сумма основной заработной платы ($\text{З}_{\text{о}}$) на этапе проектирования составляет 5250,00~руб.
@@ -77,10 +76,9 @@
 
 \begin{table}[ht]
 \caption{Расчет сметы затрат на проектирование (С1)}
-\centering
-\begin{tabular}{|p{0.55\textwidth}|p{0.18\textwidth}|p{0.17\textwidth}|}
+\begin{tabularx}{\textwidth}{|X|C{0.18\textwidth}|C{0.17\textwidth}|}
 \hline
-Наименование статьи затрат & Обозначение & Сумма, руб. \\
+\centering\arraybackslash Наименование статьи затрат & Обозначение & Сумма, руб. \\
 \hline
 1 Основная заработная плата & $\text{З}_{\text{о}}$ & 5250,00 \\
 \hline
@@ -94,7 +92,7 @@
 \hline
 6 Полная себестоимость проектирования (С1) & $\text{С}_{\text{п1}}$ & 15~726,90 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Смета затрат на реализацию и аппаратное обеспечение (С2)}
@@ -103,10 +101,9 @@
 
 \begin{table}[ht]
 \caption{Расчет затрат на материалы и оборудование}
-\centering
-\begin{tabular}{|p{0.45\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|}
+\begin{tabularx}{\textwidth}{|X|C{0.15\textwidth}|C{0.15\textwidth}|C{0.15\textwidth}|}
 \hline
-Наименование оборудования & Количество, шт. & Цена за ед., руб. & Сумма, руб. \\
+\centering\arraybackslash Наименование оборудования & Количество, шт. & Цена за ед., руб. & Сумма, руб. \\
 \hline
 Сервер вычислений (многоядерный процессор x86-64) & 1 & 8000 & 8000 \\
 \hline
@@ -118,9 +115,9 @@
 \hline
 \multicolumn{3}{|l|}{Итого ($\text{Р}_{\text{мк}}$)} & 17~500 \\
 \hline
-\multicolumn{4}{|p{0.96\textwidth}|}{Примечание~-- цены на серверное оборудование взяты из актуальных прайс-листов интернет-каталога catalog.onliner.by по состоянию на \targetYear~год.} \\
+\multicolumn{4}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{Примечание~--- цены на серверное оборудование взяты из актуальных прайс-листов интернет-каталога catalog.onliner.by по состоянию на \targetYear~год.} \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Итоговая сумма затрат на оборудование ($\text{Р}_{\text{мк}}$) составляет 17~500,00~руб.
@@ -129,10 +126,9 @@
 
 \begin{table}[ht]
 \caption{Расчет основной зарплаты исполнителей за программную реализацию}
-\centering
-\begin{tabular}{|p{0.30\textwidth}|p{0.15\textwidth}|p{0.20\textwidth}|p{0.15\textwidth}|p{0.10\textwidth}|}
+\begin{tabularx}{\textwidth}{|X|C{0.15\textwidth}|C{0.20\textwidth}|C{0.15\textwidth}|C{0.12\textwidth}|}
 \hline
-Исполнители & Количество, чел. & Трудоемкость, мес. & Зарплата в месяц, руб. & Сумма, руб. \\
+\centering\arraybackslash Исполнитель & Количество, чел. & Трудоемкость, мес. & Зарплата в месяц, руб. & Сумма, руб. \\
 \hline
 Инженер-программист & 2 & 1,0 & 1750 & 3500 \\
 \hline
@@ -142,7 +138,7 @@
 \hline
 \multicolumn{4}{|l|}{Всего основная заработная плата} & 6650 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Итоговая сумма основной заработной платы ($\text{З}_{\text{о}}$) составляет 6650,00~руб.
@@ -166,10 +162,9 @@
 
 \begin{table}[ht]
 \caption{Расчет сметы затрат на программную реализацию (С2)}
-\centering
-\begin{tabular}{|p{0.55\textwidth}|p{0.18\textwidth}|p{0.17\textwidth}|}
+\begin{tabularx}{\textwidth}{|X|C{0.18\textwidth}|C{0.17\textwidth}|}
 \hline
-Наименование статьи затрат & Обозначение & Сумма, руб. \\
+\centering\arraybackslash Наименование статьи затрат & Обозначение & Сумма, руб. \\
 \hline
 1 Основная заработная плата & $\text{З}_{\text{о}}$ & 6650,00 \\
 \hline
@@ -185,7 +180,7 @@
 \hline
 7 Полная себестоимость реализации (С2) & $\text{С}_{\text{п2}}$ & 37~420,74 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Расчет экономического эффекта}
