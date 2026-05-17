@@ -837,15 +837,11 @@
 \newcommand{\annex}[2]{
   \newpage
   \stepcounter{equation_annex}
-  \begin{center}
+  {\centering
     ПРИЛОЖЕНИЕ \annexAlph{equation_annex}\\
-    (#1)
-  \end{center}
-  \vspace{1em}
-  \begin{center}
-    \textbf{#2}
-  \end{center}
-  \vspace{1em}
+    (#1)\\[18pt]
+    \textbf{#2}\par\vspace{18pt}
+  }
   \addtocline{section}{Приложение \annexAlph{equation_annex} (#1) #2}
 }
 
